@@ -34,6 +34,9 @@ const decryptPassword = (encrypted) => {
   return originalText;
 };
 
+app.get('/',(req,res)=>{
+ res.status(200).json({ success: true, message: "Heloo World" });
+})
 // Signup Route
 app.post("/signup", async (req, res) => {
   try {
@@ -111,7 +114,8 @@ app.get("/feed", async (req, res) => {
       .limit(10)
       .populate({
         path: "userId",
-        select: "firstName lastName jobTitle", // Get only required user fields
+         model: "User", 
+        select: "firstname lastname jobtilte", // Match schema exactly // Get only required user fields
       });
 
     // Format the result
@@ -122,9 +126,9 @@ app.get("/feed", async (req, res) => {
       createdAt: post.createdAt,
       tags: post.tags,
       author: {
-        name: `${post.userId.firstName} ${post.userId.lastName}`,
-        jobTitle: post.userId.jobTitle,
-      }
+        name: `${post.userId.firstname || ''} ${post.userId.lastname || ''}`.trim(),
+        jobTitle: post.userId.jobtilte || '', // Note: 'jobtilte' (misspelled)
+        }   
     }));
 
     res.json(formatted);
@@ -139,5 +143,5 @@ app.get("/feed", async (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running`);
 });
